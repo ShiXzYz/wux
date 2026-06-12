@@ -6,7 +6,7 @@ function touch {
 
         [Alias('a')][switch]$AccessTime,
         [Alias('m')][switch]$ModifyTime,
-        [Alias('c')][switch]$NoCrete,
+        [Alias('c')][switch]$NoCreate,
         [Alias('t')][string]$Time,       # [[CC]YY]MMDDhhmm[.ss]
         [Alias('r')][string]$Reference,
         [Alias('d')][string]$Date
@@ -15,16 +15,15 @@ function touch {
     $stamp = if ($Reference) {
         (Get-Item $Reference).LastWriteTime
     } elseif ($Time) {
-        # Parse [[CC]YY]MMDDhhmm[.ss]
+        # Parse [[CC]YY]MMDDhhmm[.ss]  (remove optional dot before seconds)
         $t = $Time -replace '\.', ''
-        $fmt = switch ($t.Length) {
-            12 { 'yyyyMMddHHmm' }
-            10 { 'MMddHHmm' }
-             8 { 'MMddHHmm' }
-            default { $null }
+        switch ($t.Length) {
+            14 { [datetime]::ParseExact($t, 'yyyyMMddHHmmss', $null) }
+            12 { [datetime]::ParseExact($t, 'yyyyMMddHHmm',   $null) }
+            10 { [datetime]::ParseExact($t, 'yyMMddHHmm',     $null) }
+             8 { [datetime]::ParseExact($t, 'MMddHHmm',       $null) }
+            default { Get-Date }
         }
-        if ($fmt) { [datetime]::ParseExact($t.PadLeft(12,'0').Substring($t.Length - 10),'MMddHHmmss',$null) }
-        else { Get-Date }
     } elseif ($Date) {
         [datetime]$Date
     } else {
@@ -36,7 +35,7 @@ function touch {
 
     foreach ($f in $Files) {
         if (-not (Test-Path $f)) {
-            if (-not $NoCrete) { New-Item -ItemType File $f | Out-Null }
+            if (-not $NoCreate) { New-Item -ItemType File $f | Out-Null }
         }
         if (Test-Path $f) {
             $item = Get-Item $f

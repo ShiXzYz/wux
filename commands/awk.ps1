@@ -42,10 +42,10 @@ function awk {
     while ($rest -and $rest.Trim()) {
         $rest = $rest.Trim()
         if ($rest -match '^BEGIN\s*\{') {
-            $result = Extract-Block $rest
+            $result = Extract-Block ($rest -replace '^BEGIN\s*', '')
             $beginBlock = $result[0]; $rest = $result[1]
         } elseif ($rest -match '^END\s*\{') {
-            $result = Extract-Block $rest
+            $result = Extract-Block ($rest -replace '^END\s*', '')
             $endBlock = $result[0]; $rest = $result[1]
         } elseif ($rest[0] -eq '{') {
             $result = Extract-Block $rest
@@ -69,11 +69,11 @@ function awk {
             $n      = [int]$Matches[1]
             $fields = $ctx['_fields']
             if ($n -eq 0) { return $ctx['$0'] }
-            return if ($n -le $fields.Count) { $fields[$n - 1] } else { '' }
+            if ($n -le $fields.Count) { return $fields[$n - 1] } else { return '' }
         }
         if ($expr -eq '$NF') {
             $fields = $ctx['_fields']
-            return if ($fields.Count -gt 0) { $fields[-1] } else { '' }
+            if ($fields.Count -gt 0) { return $fields[-1] } else { return '' }
         }
         if ($ctx.ContainsKey($expr)) { return $ctx[$expr] }
         if ($expr -match '^"(.*)"$') { return $Matches[1] }

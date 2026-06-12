@@ -32,9 +32,10 @@ function find {
         ErrorAction = 'SilentlyContinue'
     }
 
+    $resolvedBase = (Resolve-Path $Path).Path.TrimEnd([IO.Path]::DirectorySeparatorChar)
     Get-ChildItem @gciParams | Where-Object {
         $item = $_
-        $depth = ($item.FullName.Replace($Path, '').Split([IO.Path]::DirectorySeparatorChar) | Where-Object { $_ }).Count - 1
+        $depth = ($item.FullName.Substring($resolvedBase.Length).Split([IO.Path]::DirectorySeparatorChar) | Where-Object { $_ }).Count - 1
 
         if ($depth -lt $MinDepth -or $depth -gt $MaxDepth) { return $false }
 

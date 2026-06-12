@@ -81,8 +81,8 @@ function grep {
             if ($isMatch) {
                 $matchCount++
                 $matchedLines += $i
-                $script:exitCode = 0
-                $script:foundAny = $true
+                Set-Variable -Name exitCode -Value 0    -Scope 1
+                Set-Variable -Name foundAny -Value $true -Scope 1
                 if ($matchCount -ge $MaxCount) { break }
             }
         }
@@ -122,9 +122,10 @@ function grep {
                 if ($LineNumber)   { $out += "$($j+1)${sep}" }
 
                 if ($useColor -and $j -eq $idx -and -not $InvertMatch) {
+                    $esc = [char]27
                     $colored = [System.Text.RegularExpressions.Regex]::Replace(
                         $line, $Pattern,
-                        { param($m) "`e[1;31m$($m.Value)`e[0m" },
+                        { param($m) "${esc}[1;31m$($m.Value)${esc}[0m" },
                         $regexOpts
                     )
                     Write-Output ($out + $colored)
