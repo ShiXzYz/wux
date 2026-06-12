@@ -1,5 +1,8 @@
 function Register-WuxCompleters {
-    $wuxCommands = @('grep','head','tail','sed','awk','find','touch','chmod')
+    $wuxCommands = @('grep','head','tail','sed','awk','find','touch','chmod',
+                     'nano','ss','systemctl','df','du','ps','kill','which',
+                     'wc','tee','free','uptime','uniq','env',
+                     'cat','whoami','cp','mv','mkdir','chown')
 
     foreach ($cmd in $wuxCommands) {
         Register-ArgumentCompleter -CommandName $cmd -ScriptBlock {
@@ -7,16 +10,37 @@ function Register-WuxCompleters {
 
             # Flags for each command
             $flagMap = @{
-                grep  = @('-i','-r','-R','-l','-L','-n','-c','-v','-w','-x','-o','-q','-H','-h',
-                           '-e','-f','-A','-B','-C','-m','--color','--no-color')
-                head  = @('-n','-c','-q','-v')
-                tail  = @('-n','-c','-f','-q','-v')
-                sed   = @('-i','-n','-E','-r','-e','-f')
-                awk   = @('-F','-f','-v','-W')
-                find  = @('-name','-iname','-type','-newer','-maxdepth','-mindepth',
-                           '-mtime','-size','-empty','-delete','-exec','-print','-L')
-                touch = @('-a','-m','-c','-t','-r','-d')
-                chmod = @('-R','-v','-c')
+                grep      = @('-i','-r','-R','-l','-L','-n','-c','-v','-w','-x','-o','-q','-H','-h',
+                               '-e','-f','-A','-B','-C','-m','--color','--no-color')
+                head      = @('-n','-c','-q','-v')
+                tail      = @('-n','-c','-f','-q','-v')
+                sed       = @('-i','-n','-E','-r','-e','-f')
+                awk       = @('-F','-f','-v','-W')
+                find      = @('-name','-iname','-type','-newer','-maxdepth','-mindepth',
+                               '-mtime','-size','-empty','-delete','-exec','-print','-L')
+                touch     = @('-a','-m','-c','-t','-r','-d')
+                chmod     = @('-R','-v','-c')
+                nano      = @('-R')
+                ss        = @('-t','-u','-l','-a','-n','-p','-4','-6')
+                systemctl = @('start','stop','restart','reload','status','enable','disable',
+                               'is-active','is-enabled','list-units','list-unit-files','daemon-reload')
+                df        = @('-h','-k','-m','-T','-i')
+                du        = @('-h','-s','-a','-c','-d','-m')
+                ps        = @('-e','-A','-f','-u','-x','-Pid')
+                kill      = @('-s','-Force')
+                which     = @('-a')
+                wc        = @('-l','-w','-c','-m')
+                tee       = @('-a')
+                free      = @('-h','-m','-g','-k')
+                uptime    = @('-p','-s')
+                uniq      = @('-c','-d','-u','-i','-f','-s')
+                env       = @('-u','-i')
+                cat       = @('-n','-b','-s','-A','-E','-T')
+                whoami    = @('-a','-Groups','-User')
+                cp        = @('-r','-R','-f','-n','-v','-p')
+                mv        = @('-f','-n','-v','-b')
+                mkdir     = @('-p','-v','-Mode')
+                chown     = @('-R','-v')
             }
 
             $cmdName = $commandAst.CommandElements[0].Value
