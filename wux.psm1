@@ -33,4 +33,4 @@ $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
 Export-ModuleMember -Function grep, head, tail, sed, awk, find, touch, chmod,
                                nano, ss, systemctl, df, du, ps, kill, which,
                                wc, tee, free, uptime, uniq, env,
-                               cat, whoami, cp, mv, mkdir, chown
+                               cat, whoami, cp, mv, mkdir, chown, ls
