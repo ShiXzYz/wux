@@ -78,11 +78,13 @@ Import-Module C:\path\to\wux\wux.psd1
 # Add this line to $PROFILE:
 Import-Module C:\path\to\wux\wux.psd1
 
-# Unload
-Remove-Module wux
+# Unload (restores the original ls/rm/cat/etc. aliases)
+Uninstall-Wux
 ```
 
-Once loaded, the built-in PowerShell aliases for `cat`, `cp`, `mv`, `ps`, `tee`, `rm`, `echo`, `diff`, `sort`, `alias`, `man`, `pwd`, `ls`, `kill`, `wget`, and `mount` are automatically redirected to the wux versions and restored when the module is removed.
+Once loaded, the built-in PowerShell aliases for `cat`, `cp`, `mv`, `ps`, `tee`, `rm`, `echo`, `diff`, `sort`, `alias`, `man`, `pwd`, `ls`, `kill`, `wget`, and `mount` are automatically redirected to the wux versions.
+
+Use `Uninstall-Wux` (not `Remove-Module wux`) to unload — PowerShell ties any alias set while a module is loaded to that module and wipes it out as part of the module's own teardown, even before a normal `Remove-Module` could restore it. `Uninstall-Wux` removes the module and then resets those aliases back to their originals from outside the module, which is the only point at which the restore actually sticks.
 
 ## Combined short flags
 

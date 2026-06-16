@@ -100,24 +100,34 @@ function script:$name {
 "@
 }
 
-# Override built-in aliases that shadow our functions; restore originals on module unload
-$script:_savedAliases = @{}
-$script:_overrides = @('cat','cp','mv','ps','tee','rm','echo','diff','sort','alias','man','pwd','ls','kill','wget','mount')
-foreach ($name in $script:_overrides) {
+# Override built-in aliases that shadow our functions.
+#
+# PowerShell associates any alias set via Set-Alias -Scope Global while code is
+# executing inside a module's context with that module, and deletes it as part of
+# Remove-Module's own teardown -- even if a Module.OnRemove handler already restored
+# it to its original value first. Restoring the aliases therefore can't be done from
+# inside the module at all; it has to happen in a separate step after Remove-Module
+# has fully returned. Uninstall-Wux (below) is that step -- use it instead of plain
+# Remove-Module wux to get the original ls/rm/cat/etc. aliases back.
+$savedAliases = @{}
+$overrides    = @('cat','cp','mv','ps','tee','rm','echo','diff','sort','alias','man','pwd','ls','kill','wget','mount')
+foreach ($name in $overrides) {
     $a = Get-Alias $name -Scope Global -ErrorAction SilentlyContinue
-    if ($a) { $script:_savedAliases[$name] = $a.Definition }
+    if ($a) { $savedAliases[$name] = $a.Definition }
     Set-Alias -Name $name -Value "wux\$name" -Scope Global -Force -Option AllScope
 }
 
-$MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
-    foreach ($name in $script:_savedAliases.Keys) {
-        Set-Alias -Name $name -Value $script:_savedAliases[$name] -Scope Global -Force -ErrorAction SilentlyContinue
-    }
-    foreach ($name in $script:_overrides) {
-        if (-not $script:_savedAliases.ContainsKey($name)) {
+# Defined directly on the Function: provider (not via Export-ModuleMember), so it
+# isn't tracked as belonging to the module and survives Remove-Module wux.
+Set-Item -Path Function:Global:Uninstall-Wux -Value {
+    Remove-Module wux -Force -ErrorAction SilentlyContinue
+    foreach ($name in $overrides) {
+        if ($savedAliases.ContainsKey($name)) {
+            Set-Alias -Name $name -Value $savedAliases[$name] -Scope Global -Force -Option AllScope -ErrorAction SilentlyContinue
+        } else {
             Remove-Item "Alias:\$name" -Force -ErrorAction SilentlyContinue
         }
     }
-}
+}.GetNewClosure()
 
 Export-ModuleMember -Function $script:_exportedNames
