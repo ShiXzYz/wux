@@ -1,4 +1,4 @@
-function man {
+function Wux_man {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$Command,

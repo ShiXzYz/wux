@@ -1,4 +1,4 @@
-function uptime {
+function Wux_uptime {
     [CmdletBinding()]
     param(
         [Alias('p')][switch]$Pretty,

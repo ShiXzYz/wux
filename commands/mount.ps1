@@ -1,4 +1,4 @@
-function mount {
+function Wux_mount {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0)][string]$Source,

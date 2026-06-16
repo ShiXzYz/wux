@@ -1,4 +1,4 @@
-function env {
+function Wux_env {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]

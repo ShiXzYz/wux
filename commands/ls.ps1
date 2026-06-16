@@ -1,4 +1,4 @@
-function ls {
+function Wux_ls {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)]

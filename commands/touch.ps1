@@ -1,4 +1,4 @@
-function touch {
+function Wux_touch {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]

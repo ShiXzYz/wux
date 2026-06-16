@@ -1,4 +1,4 @@
-function systemctl {
+function Wux_systemctl {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)]

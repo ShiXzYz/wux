@@ -1,4 +1,4 @@
-function wc {
+function Wux_wc {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]

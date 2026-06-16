@@ -1,4 +1,4 @@
-function nano {
+function Wux_nano {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)]

@@ -1,4 +1,4 @@
-function useradd {
+function Wux_useradd {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory)][string]$Username,

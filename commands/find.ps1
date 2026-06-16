@@ -1,4 +1,4 @@
-function find {
+function Wux_find {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)]

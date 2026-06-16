@@ -1,4 +1,4 @@
-function sort {
+function Wux_sort {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string[]]$Files,

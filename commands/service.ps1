@@ -1,4 +1,4 @@
-function service {
+function Wux_service {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory)][string]$ServiceName,

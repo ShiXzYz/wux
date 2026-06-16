@@ -1,4 +1,4 @@
-function comm {
+function Wux_comm {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$File1,

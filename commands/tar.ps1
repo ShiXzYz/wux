@@ -1,4 +1,4 @@
-function tar {
+function Wux_tar {
     [CmdletBinding()]
     param(
         [Parameter(ValueFromRemainingArguments)]

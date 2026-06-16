@@ -1,4 +1,4 @@
-function mkdir {
+function Wux_mkdir {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]

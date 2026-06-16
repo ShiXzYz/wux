@@ -1,4 +1,4 @@
-function less {
+function Wux_less {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$File,

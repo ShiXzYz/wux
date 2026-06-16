@@ -1,4 +1,4 @@
-function diff {
+function Wux_diff {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$File1,

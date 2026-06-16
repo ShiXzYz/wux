@@ -1,4 +1,4 @@
-function which {
+function Wux_which {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]

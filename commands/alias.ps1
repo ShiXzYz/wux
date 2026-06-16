@@ -1,4 +1,4 @@
-function alias {
+function Wux_alias {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]

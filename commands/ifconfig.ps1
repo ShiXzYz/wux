@@ -1,4 +1,4 @@
-function ifconfig {
+function Wux_ifconfig {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][string]$Interface

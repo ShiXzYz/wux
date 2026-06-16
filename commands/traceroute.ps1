@@ -1,4 +1,4 @@
-function traceroute {
+function Wux_traceroute {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$Destination,

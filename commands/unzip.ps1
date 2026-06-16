@@ -1,4 +1,4 @@
-function unzip {
+function Wux_unzip {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$ZipFile,

@@ -1,4 +1,4 @@
-function passwd {
+function Wux_passwd {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0)][string]$Username = $env:USERNAME

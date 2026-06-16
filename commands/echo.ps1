@@ -1,4 +1,4 @@
-function echo {
+function Wux_echo {
     [CmdletBinding()]
     param(
         [Alias('e')][switch]$InterpretEscapes,

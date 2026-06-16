@@ -1,4 +1,4 @@
-function chown {
+function Wux_chown {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory)]

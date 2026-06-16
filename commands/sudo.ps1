@@ -1,4 +1,4 @@
-function sudo {
+function Wux_sudo {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]
