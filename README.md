@@ -29,7 +29,7 @@ Hm... Sometimes I just do not wanna deal with Powershell and stick with Linux. I
 | `ln` | Create hard or symbolic links (`-s` symbolic, `-f` force, `-v` verbose) |
 | `cp` | Copy files/directories (`-r` recursive, `-f` force, `-n` no-clobber, `-p` preserve timestamps) |
 | `mv` | Move/rename files (`-f` force, `-n` no-clobber, `-b` backup) |
-| `rm` | Remove files or directories (`-r`/`-R` recursive, `-f` force, `-i` interactive, `-v` verbose) |
+| `rm` | Remove files or directories (`-r` recursive, `-f` force, `-i` interactive, `-v` verbose) |
 | `mkdir` | Create directories (`-p` parents, no error if exists) |
 | `chmod` | Change file permissions using octal or symbolic notation (`-R` recursive) |
 | `chown` | Change file ownership via Windows ACL (`-R` recursive) |
@@ -82,7 +82,11 @@ Import-Module C:\path\to\wux\wux.psd1
 Remove-Module wux
 ```
 
-Once loaded, the built-in PowerShell aliases for `cat`, `cp`, `mv`, `ps`, and `tee` are automatically redirected to the wux versions and restored when the module is removed.
+Once loaded, the built-in PowerShell aliases for `cat`, `cp`, `mv`, `ps`, `tee`, `rm`, `echo`, `diff`, `sort`, `alias`, `man`, `pwd`, `ls`, `kill`, `wget`, and `mount` are automatically redirected to the wux versions and restored when the module is removed.
+
+## Combined short flags
+
+Bundled Unix-style short flags work as expected, e.g. `ls -la`, `ss -tunap`, `rm -rf`. Each command resolves bundled flags against its own parameters, so only valid single-letter switches combine; anything else (file paths, values) is passed through untouched.
 
 ## Pipeline support
 
