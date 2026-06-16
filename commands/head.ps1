@@ -1,4 +1,4 @@
-function head {
+function Wux_head {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]

@@ -1,4 +1,4 @@
-function top {
+function Wux_top {
     [CmdletBinding()]
     param(
         [Alias('n')][int]$Iterations = 0,

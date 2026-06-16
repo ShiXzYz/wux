@@ -1,4 +1,4 @@
-function cal {
+function Wux_cal {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)][int]$Month = (Get-Date).Month,

@@ -1,4 +1,4 @@
-function zip {
+function Wux_zip {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$ZipFile,

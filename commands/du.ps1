@@ -1,4 +1,4 @@
-function du {
+function Wux_du {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]

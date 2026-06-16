@@ -1,4 +1,4 @@
-function uname {
+function Wux_uname {
     [CmdletBinding()]
     param(
         [Alias('a')][switch]$All,
@@ -15,7 +15,7 @@ function uname {
     $node     = $env:COMPUTERNAME
     $release  = $os.Version.ToString()
     $version  = $os.VersionString
-    $machine  = $env:PROCESSOR_ARCHITECTURE
+    $machineArch = $env:PROCESSOR_ARCHITECTURE
     $osName   = 'Windows'
 
     $noneSet = -not ($All -or $KernelName -or $NodeName -or $KernelRelease -or $KernelVersion -or $Machine -or $OperatingSystem)
@@ -26,7 +26,7 @@ function uname {
     if ($All -or $NodeName)         { $parts += $node }
     if ($All -or $KernelRelease)    { $parts += $release }
     if ($All -or $KernelVersion)    { $parts += $version }
-    if ($All -or $Machine)          { $parts += $machine }
+    if ($All -or $Machine)          { $parts += $machineArch }
     if ($All -or $OperatingSystem)  { $parts += $osName }
     $parts -join ' '
 }

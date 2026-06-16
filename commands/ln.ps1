@@ -1,9 +1,9 @@
-function ln {
+function Wux_ln {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Alias('s')][switch]$Symbolic,
         [Alias('f')][switch]$Force,
-        [Alias('v')][switch]$Verbose,
+        [Alias('v')][switch]$VerboseOutput,
         [Parameter(Position = 0, Mandatory)][string]$Target,
         [Parameter(Position = 1, Mandatory)][string]$LinkName
     )
@@ -15,7 +15,7 @@ function ln {
     if ($PSCmdlet.ShouldProcess("$LinkName -> $Target", "create $type")) {
         try {
             New-Item -ItemType $type -Path $LinkName -Target $Target -ErrorAction Stop | Out-Null
-            if ($Verbose) { Write-Output "'$LinkName' -> '$Target'" }
+            if ($VerboseOutput) { Write-Output "'$LinkName' -> '$Target'" }
         } catch [UnauthorizedAccessException] {
             Write-Error "ln: failed to create $type '$LinkName': Permission denied (run as Administrator or enable Developer Mode)"
         } catch {

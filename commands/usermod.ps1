@@ -1,4 +1,4 @@
-function usermod {
+function Wux_usermod {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory)][string]$Username,

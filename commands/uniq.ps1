@@ -1,4 +1,4 @@
-function uniq {
+function Wux_uniq {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)]

@@ -1,4 +1,4 @@
-function ss {
+function Wux_ss {
     [CmdletBinding()]
     param(
         [Alias('t')][switch]$TCP,
@@ -49,11 +49,11 @@ function ss {
     }
 
     if ($showUDP) {
-        $udp = Get-NetUDPEndpoint -ErrorAction SilentlyContinue
-        if ($IPv4) { $udp = $udp | Where-Object { $_.LocalAddress -notmatch ':' } }
-        if ($IPv6) { $udp = $udp | Where-Object { $_.LocalAddress -match    ':' } }
+        $udpConns = Get-NetUDPEndpoint -ErrorAction SilentlyContinue
+        if ($IPv4) { $udpConns = $udpConns | Where-Object { $_.LocalAddress -notmatch ':' } }
+        if ($IPv6) { $udpConns = $udpConns | Where-Object { $_.LocalAddress -match    ':' } }
 
-        foreach ($c in $udp) {
+        foreach ($c in $udpConns) {
             $rows.Add([PSCustomObject]@{
                 Netid   = 'udp'
                 State   = 'UNCONN'

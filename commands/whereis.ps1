@@ -1,4 +1,4 @@
-function whereis {
+function Wux_whereis {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]

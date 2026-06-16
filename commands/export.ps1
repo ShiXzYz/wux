@@ -1,4 +1,4 @@
-function export {
+function Wux_export {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]

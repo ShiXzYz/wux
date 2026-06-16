@@ -1,4 +1,4 @@
-function sed {
+function Wux_sed {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)]

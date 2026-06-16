@@ -1,4 +1,4 @@
-function wget {
+function Wux_wget {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$Url,

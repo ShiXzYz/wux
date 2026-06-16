@@ -1,4 +1,4 @@
-function mv {
+function Wux_mv {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory)]

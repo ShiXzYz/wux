@@ -1,4 +1,4 @@
-function apt {
+function Wux_apt {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$Action,

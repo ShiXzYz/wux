@@ -1,4 +1,4 @@
-function killall {
+function Wux_killall {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]

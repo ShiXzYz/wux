@@ -1,4 +1,4 @@
-function grep {
+function Wux_grep {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)]

@@ -1,4 +1,4 @@
-function cat {
+function Wux_cat {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]

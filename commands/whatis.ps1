@@ -1,4 +1,4 @@
-function whatis {
+function Wux_whatis {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]

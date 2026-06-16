@@ -1,13 +1,13 @@
-function rm {
+function Wux_rm {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory, ValueFromRemainingArguments)]
         [string[]]$Paths,
 
-        [Alias('r','R')][switch]$Recursive,
+        [Alias('r')][switch]$Recursive,
         [Alias('f')][switch]$Force,
         [Alias('i')][switch]$Interactive,
-        [Alias('v')][switch]$Verbose
+        [Alias('v')][switch]$VerboseOutput
     )
 
     foreach ($path in $Paths) {
@@ -24,7 +24,7 @@ function rm {
 
         if ($Interactive -and -not $PSCmdlet.ShouldProcess($path, 'remove')) { continue }
 
-        Remove-Item $path -Recurse:$Recursive -Force:$Force -ErrorAction (if ($Force) { 'SilentlyContinue' } else { 'Stop' })
-        if ($Verbose) { Write-Output "removed '$path'" }
+        Remove-Item $path -Recurse:$Recursive -Force:$Force -ErrorAction $(if ($Force) { 'SilentlyContinue' } else { 'Stop' })
+        if ($VerboseOutput) { Write-Output "removed '$path'" }
     }
 }

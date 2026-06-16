@@ -1,4 +1,4 @@
-function df {
+function Wux_df {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]

@@ -1,4 +1,4 @@
-function cp {
+function Wux_cp {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory)]

@@ -1,4 +1,4 @@
-function whoami {
+function Wux_whoami {
     [CmdletBinding()]
     param(
         [switch]$Groups,

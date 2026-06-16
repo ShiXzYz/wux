@@ -1,4 +1,4 @@
-function free {
+function Wux_free {
     [CmdletBinding()]
     param(
         [Alias('h')][switch]$HumanReadable,

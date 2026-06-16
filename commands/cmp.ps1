@@ -1,10 +1,10 @@
-function cmp {
+function Wux_cmp {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, Mandatory)][string]$File1,
         [Parameter(Position = 1, Mandatory)][string]$File2,
         [Alias('s')][switch]$Silent,
-        [Alias('l')][switch]$Verbose
+        [Alias('l')][switch]$VerboseOutput
     )
 
     foreach ($f in $File1, $File2) {
@@ -21,7 +21,7 @@ function cmp {
     for ($i = 0; $i -lt $minLen; $i++) {
         if ($bytes1[$i] -ne $bytes2[$i]) {
             $differences = $true
-            if ($Verbose) {
+            if ($VerboseOutput) {
                 Write-Output ('{0,8} {1,3} {2,3}' -f ($i + 1), $bytes1[$i], $bytes2[$i])
             } elseif (-not $Silent) {
                 Write-Output "$File1 $File2 differ: byte $($i + 1), line $line"

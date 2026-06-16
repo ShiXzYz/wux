@@ -1,4 +1,4 @@
-function awk {
+function Wux_awk {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0)]

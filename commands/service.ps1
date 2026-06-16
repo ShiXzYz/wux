@@ -1,4 +1,4 @@
-function service {
+function Wux_service {
     [CmdletBinding(SupportsShouldProcess)]
     param(
         [Parameter(Position = 0, Mandatory)][string]$ServiceName,
@@ -8,7 +8,7 @@ function service {
     )
 
     $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-    if (-not $svc) { Write-Error "service: $ServiceName: not found"; return }
+    if (-not $svc) { Write-Error "service: ${ServiceName}: not found"; return }
 
     switch ($Action) {
         'start'   {

@@ -1,4 +1,4 @@
-function tail {
+function Wux_tail {
     [CmdletBinding()]
     param(
         [Parameter(Position = 0, ValueFromRemainingArguments)]
