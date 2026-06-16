@@ -20,7 +20,7 @@ function alias {
         } else {
             $a = Get-Alias $def -ErrorAction SilentlyContinue
             if ($a) { "alias $($a.Name)='$($a.Definition)'" }
-            else    { Write-Error "alias: $def: not found" }
+            else    { Write-Error "alias: ${def}: not found" }
         }
     }
 }

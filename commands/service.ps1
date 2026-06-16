@@ -8,7 +8,7 @@ function service {
     )
 
     $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-    if (-not $svc) { Write-Error "service: $ServiceName: not found"; return }
+    if (-not $svc) { Write-Error "service: ${ServiceName}: not found"; return }
 
     switch ($Action) {
         'start'   {
