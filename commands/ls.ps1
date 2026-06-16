@@ -12,7 +12,7 @@ function ls {
         [Alias('S')][switch]$SortSize,  # sort by file size
         [Alias('1')][switch]$OnePerLine, # one entry per line
         [Alias('d')][switch]$Directory, # list directory itself, not its contents
-        [Alias('R')][switch]$Recurse    # list subdirectories recursively
+        [switch]$Recurse                # list subdirectories recursively
     )
 
     $gciParams = @{ Path = $Path; ErrorAction = 'Stop' }

@@ -13,7 +13,7 @@ Register-WuxCompleters
 
 # Override built-in aliases that shadow our functions; restore originals on module unload
 $script:_savedAliases = @{}
-$script:_overrides = @('cat','cp','mv','ps','tee','rm','echo','diff','sort','alias','man','pwd')
+$script:_overrides = @('cat','cp','mv','ps','tee','rm','echo','diff','sort','alias','man','pwd','ls')
 foreach ($name in $script:_overrides) {
     $a = Get-Alias $name -Scope Global -ErrorAction SilentlyContinue
     if ($a) { $script:_savedAliases[$name] = $a.Definition }
