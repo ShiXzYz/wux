@@ -20,7 +20,7 @@ function Register-WuxCompleters {
                                '-mtime','-size','-empty','-delete','-exec','-print','-L')
                 touch     = @('-a','-m','-c','-t','-r','-d')
                 chmod     = @('-R','-v','-c')
-                nano      = @('-R')
+                nano      = @('-R','-c','-l')
                 ss        = @('-t','-u','-l','-a','-n','-p','-4','-6')
                 systemctl = @('start','stop','restart','reload','status','enable','disable',
                                'is-active','is-enabled','list-units','list-unit-files','daemon-reload')
