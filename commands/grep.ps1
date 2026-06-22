@@ -50,17 +50,21 @@ function Wux_grep {
         if ($WordRegex) { $Pattern = "\b$Pattern\b" }
         if ($LineRegex) { $Pattern = "^(?:$Pattern)$" }
 
+        $re = [System.Text.RegularExpressions.Regex]::new($Pattern, $regexOpts)
+
         $esc      = [char]27
         $useColor = -not $NoColor -and ($Color -eq 'always' -or ($Color -eq 'auto' -and $Host.UI.SupportsVirtualTerminal))
 
-        $inputFiles = @()
+        $inputFiles = [System.Collections.Generic.List[object]]::new()
         $useStdin   = $false
 
         if ($Files.Count -eq 0) {
             $useStdin = $true
         } elseif ($Recursive) {
             foreach ($f in $Files) {
-                $inputFiles += Get-ChildItem -Path $f -Recurse -File -ErrorAction SilentlyContinue
+                foreach ($item in (Get-ChildItem -Path $f -Recurse -File -ErrorAction SilentlyContinue)) {
+                    $inputFiles.Add($item)
+                }
             }
         } else {
             foreach ($f in $Files) {
@@ -68,35 +72,39 @@ function Wux_grep {
                     Write-Error "grep: ${f}: Is a directory"
                 } else {
                     $item = Get-Item $f -ErrorAction SilentlyContinue
-                    if ($item) { $inputFiles += $item }
+                    if ($item) { $inputFiles.Add($item) }
                     else { Write-Error "grep: ${f}: No such file or directory" }
                 }
             }
         }
 
         $showFilename = $WithFilename -or ($inputFiles.Count -gt 1 -and -not $NoFilename)
-        $foundAny     = $false
         $exitCode     = 1
 
         function Process-Lines {
             param($lines, $sourceName)
 
             $matchCount   = 0
-            $matchedLines = @()
+            $matchedLines = [System.Collections.Generic.List[int]]::new()
 
             for ($i = 0; $i -lt $lines.Count; $i++) {
                 $line    = $lines[$i]
-                $isMatch = [System.Text.RegularExpressions.Regex]::IsMatch($line, $Pattern, $regexOpts)
+                $isMatch = $re.IsMatch($line)
                 if ($InvertMatch) { $isMatch = -not $isMatch }
 
                 if ($isMatch) {
                     $matchCount++
-                    $matchedLines += $i
-                    Set-Variable -Name exitCode -Value 0    -Scope 1
-                    Set-Variable -Name foundAny -Value $true -Scope 1
+                    $matchedLines.Add($i)
                     if ($matchCount -ge $MaxCount) { break }
                 }
             }
+
+            if ($matchCount -gt 0) { return @{ Matches = $matchedLines; Count = $matchCount; HasMatch = $true } }
+            else                    { return @{ Matches = $matchedLines; Count = 0; HasMatch = $false } }
+        }
+
+        function Output-Lines {
+            param($lines, $sourceName, $matchedLines, $matchCount)
 
             if ($Count) {
                 $prefix = if ($showFilename) { "${sourceName}:" } else { "" }
@@ -118,7 +126,7 @@ function Wux_grep {
                     if ($Quiet) { return }
 
                     if ($OnlyMatching -and $j -eq $idx) {
-                        $ms = [System.Text.RegularExpressions.Regex]::Matches($line, $Pattern, $regexOpts)
+                        $ms = $re.Matches($line)
                         foreach ($m in $ms) {
                             $out = ""
                             if ($showFilename) { $out += "${sourceName}:" }
@@ -133,11 +141,7 @@ function Wux_grep {
                     if ($LineNumber)   { $out += "$($j+1)${sep}" }
 
                     if ($useColor -and $j -eq $idx -and -not $InvertMatch) {
-                        $colored = [System.Text.RegularExpressions.Regex]::Replace(
-                            $line, $Pattern,
-                            { param($m) "${esc}[1;31m$($m.Value)${esc}[0m" },
-                            $regexOpts
-                        )
+                        $colored = $re.Replace($line, { param($m) "${esc}[1;31m$($m.Value)${esc}[0m" })
                         Write-Output ($out + $colored)
                     } else {
                         Write-Output ($out + $line)
@@ -147,11 +151,15 @@ function Wux_grep {
         }
 
         if ($useStdin) {
-            Process-Lines -lines $pipeLines.ToArray() -sourceName '(standard input)'
+            $result = Process-Lines -lines $pipeLines.ToArray() -sourceName '(standard input)'
+            if ($result.HasMatch) { $exitCode = 0 }
+            Output-Lines -lines $pipeLines.ToArray() -sourceName '(standard input)' -matchedLines $result.Matches -matchCount $result.Count
         } else {
             foreach ($f in $inputFiles) {
                 $lines = @(Get-Content $f.FullName)
-                Process-Lines -lines $lines -sourceName $f.FullName
+                $result = Process-Lines -lines $lines -sourceName $f.FullName
+                if ($result.HasMatch) { $exitCode = 0 }
+                Output-Lines -lines $lines -sourceName $f.FullName -matchedLines $result.Matches -matchCount $result.Count
             }
         }
 

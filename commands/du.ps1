@@ -22,13 +22,6 @@ function Wux_du {
         return [Math]::Ceiling($bytes / 1KB)
     }
 
-    function Get-RecursiveSize([string]$path) {
-        $sum = (Get-ChildItem $path -Recurse -Force -ErrorAction SilentlyContinue |
-                Where-Object { -not $_.PSIsContainer } |
-                Measure-Object -Property Length -Sum).Sum
-        return [long]$(if ($sum) { $sum } else { 0 })
-    }
-
     $grandTotal = [long]0
 
     foreach ($p in $Paths) {
@@ -44,35 +37,46 @@ function Wux_du {
             continue
         }
 
-        $baseDepth = ($resolved.TrimEnd('\').Split('\') | Where-Object { $_ }).Count
+        $resolvedNorm = $resolved.TrimEnd('\')
+        $baseDepth    = $resolvedNorm.Split('\').Count
 
-        if ($Summarize) {
-            $size = Get-RecursiveSize $resolved
-            "$(Format-Size $size)`t$resolved"
-            $grandTotal += $size
-        } else {
-            if ($All) {
-                Get-ChildItem $resolved -Recurse -Force -File -ErrorAction SilentlyContinue |
-                    Where-Object {
-                        $d = ($_.FullName.TrimEnd('\').Split('\') | Where-Object { $_ }).Count - $baseDepth - 1
-                        $d -lt $MaxDepth
-                    } | ForEach-Object {
-                        "$(Format-Size $_.Length)`t$($_.FullName)"
-                    }
-            }
+        # Single-pass: collect all file sizes and accumulate into each ancestor directory
+        $dirSizes = @{ $resolvedNorm = 0L }
+        $allFiles = Get-ChildItem $resolved -Recurse -Force -ErrorAction SilentlyContinue
 
-            Get-ChildItem $resolved -Recurse -Force -Directory -ErrorAction SilentlyContinue |
-                Where-Object {
-                    $d = ($_.FullName.TrimEnd('\').Split('\') | Where-Object { $_ }).Count - $baseDepth
-                    $d -le $MaxDepth
-                } | ForEach-Object {
-                    "$(Format-Size (Get-RecursiveSize $_.FullName))`t$($_.FullName)"
+        foreach ($item in $allFiles) {
+            if ($item.PSIsContainer) {
+                if (-not $dirSizes.ContainsKey($item.FullName)) { $dirSizes[$item.FullName] = 0L }
+            } else {
+                $dir = $item.DirectoryName
+                while ($dir -and $dir.Length -ge $resolvedNorm.Length) {
+                    if (-not $dirSizes.ContainsKey($dir)) { $dirSizes[$dir] = 0L }
+                    $dirSizes[$dir] += $item.Length
+                    $dir = Split-Path $dir -Parent
                 }
-
-            $totalSize = Get-RecursiveSize $resolved
-            "$(Format-Size $totalSize)`t$resolved"
-            $grandTotal += $totalSize
+                if ($All) {
+                    $fileDepth = $item.FullName.Split('\').Count - $baseDepth - 1
+                    if ($fileDepth -lt $MaxDepth) {
+                        "$(Format-Size $item.Length)`t$($item.FullName)"
+                    }
+                }
+            }
         }
+
+        if (-not $Summarize) {
+            foreach ($dir in ($dirSizes.Keys | Sort-Object)) {
+                if ($dir -eq $resolvedNorm) { continue }
+                $depth = $dir.Split('\').Count - $baseDepth
+                if ($depth -le $MaxDepth) {
+                    $sz = $dirSizes[$dir]
+                    "$(Format-Size $sz)`t$dir"
+                }
+            }
+        }
+
+        $totalSize = $dirSizes[$resolvedNorm]
+        "$(Format-Size $totalSize)`t$resolved"
+        $grandTotal += $totalSize
     }
 
     if ($Total) { "$(Format-Size $grandTotal)`ttotal" }

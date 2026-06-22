@@ -24,13 +24,15 @@ function Wux_wc {
 
         function Measure-Source([string[]]$content) {
             $lc = $content.Count
-            $wc = ($content | ForEach-Object {
-                       ($_ -split '\s+' | Where-Object { $_ }).Count
-                   } | Measure-Object -Sum).Sum
-            $bc = ($content | ForEach-Object {
-                       [System.Text.Encoding]::UTF8.GetByteCount($_)
-                   } | Measure-Object -Sum).Sum + $lc
-            return [PSCustomObject]@{ Lines = $lc; Words = [long]$wc; Bytes = [long]$bc }
+            $wc = 0L; $bc = 0L
+            foreach ($line in $content) {
+                $bc += [System.Text.Encoding]::UTF8.GetByteCount($line)
+                foreach ($part in ($line -split '\s+')) {
+                    if ($part) { $wc++ }
+                }
+            }
+            $bc += $lc  # newline bytes
+            return [PSCustomObject]@{ Lines = $lc; Words = $wc; Bytes = $bc }
         }
 
         function Format-Row([PSCustomObject]$r, [string]$name) {

@@ -107,15 +107,16 @@ function Wux_awk {
             }
         }
 
+        $escapedFs = if ($vars['FS'] -ne ' ') { [regex]::Escape($vars['FS']) } else { $null }
+
         function Process-Record {
             param([string]$record, [hashtable]$ctx)
             $ctx['NR']++
             $ctx['$0'] = $record
-            $fs        = $ctx['FS']
-            $fields    = if ($fs -eq ' ') {
+            $fields    = if ($ctx['FS'] -eq ' ') {
                 @($record -split '\s+' | Where-Object { $_ })
             } else {
-                @($record -split [regex]::Escape($fs))
+                @($record -split $escapedFs)
             }
             $ctx['_fields'] = $fields
             $ctx['NF']      = $fields.Count

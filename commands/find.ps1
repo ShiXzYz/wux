@@ -33,9 +33,39 @@ function Wux_find {
     }
 
     $resolvedBase = (Resolve-Path $Path).Path.TrimEnd([IO.Path]::DirectorySeparatorChar)
+    $baseLen      = $resolvedBase.Length
+    $sep          = [IO.Path]::DirectorySeparatorChar
+
+    # Pre-resolve expensive lookups once
+    $newerRef = if ($Newer) { Get-Item $Newer -ErrorAction SilentlyContinue } else { $null }
+    $mtimeCutoff = if ($Mtime) { (Get-Date).AddDays(-$Mtime) } else { $null }
+
+    # Pre-parse -Size once
+    $sizeSign  = $null
+    $sizeBytes = 0
+    if ($Size) {
+        $sizeSign = if ($Size[0] -in '+','-') { $Size[0] } else { '=' }
+        $raw  = $Size.TrimStart('+','-')
+        $unit = $raw[-1]
+        $num  = [double]($raw.TrimEnd('cCkKmMgG'))
+        $sizeBytes = switch ($unit) {
+            'k' { $num * 1KB }   'K' { $num * 1KB }
+            'm' { $num * 1MB }   'M' { $num * 1MB }
+            'g' { $num * 1GB }   'G' { $num * 1GB }
+            'c' { $num }
+            default { $num * 512 }
+        }
+    }
+
     Get-ChildItem @gciParams | Where-Object {
         $item = $_
-        $depth = ($item.FullName.Substring($resolvedBase.Length).Split([IO.Path]::DirectorySeparatorChar) | Where-Object { $_ }).Count - 1
+        # Cheap depth calculation: count separators in the relative path
+        $relPath = $item.FullName.Substring($baseLen)
+        $depth = 0
+        for ($ci = 0; $ci -lt $relPath.Length; $ci++) {
+            if ($relPath[$ci] -eq $sep) { $depth++ }
+        }
+        $depth--
 
         if ($depth -lt $MinDepth -or $depth -gt $MaxDepth) { return $false }
 
@@ -66,33 +96,16 @@ function Wux_find {
             }
         }
 
-        if ($Mtime) {
-            $cutoff = (Get-Date).AddDays(-$Mtime)
-            if ($item.LastWriteTime -lt $cutoff) { return $false }
-        }
+        if ($mtimeCutoff -and $item.LastWriteTime -lt $mtimeCutoff) { return $false }
 
-        if ($Newer) {
-            $ref = Get-Item $Newer -ErrorAction SilentlyContinue
-            if ($ref -and $item.LastWriteTime -le $ref.LastWriteTime) { return $false }
-        }
+        if ($newerRef -and $item.LastWriteTime -le $newerRef.LastWriteTime) { return $false }
 
         if ($Size) {
-            $sign = if ($Size[0] -in '+','-') { $Size[0] } else { '=' }
-            $raw  = $Size.TrimStart('+','-')
-            $unit = $raw[-1]
-            $num  = [double]($raw.TrimEnd('cCkKmMgG'))
-            $bytes = switch ($unit) {
-                'k' { $num * 1KB }   'K' { $num * 1KB }
-                'm' { $num * 1MB }   'M' { $num * 1MB }
-                'g' { $num * 1GB }   'G' { $num * 1GB }
-                'c' { $num }
-                default { $num * 512 }  # blocks
-            }
             $fileSize = $item.Length
-            $pass = switch ($sign) {
-                '+' { $fileSize -gt $bytes }
-                '-' { $fileSize -lt $bytes }
-                default { $fileSize -eq $bytes }
+            $pass = switch ($sizeSign) {
+                '+' { $fileSize -gt $sizeBytes }
+                '-' { $fileSize -lt $sizeBytes }
+                default { $fileSize -eq $sizeBytes }
             }
             if (-not $pass) { return $false }
         }
