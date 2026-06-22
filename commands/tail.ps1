@@ -69,12 +69,17 @@ function Wux_tail {
                     if (-not (Test-Path $f)) { continue }
                     $newLen = (Get-Item $f).Length
                     if ($newLen -gt $positions[$f]) {
-                        $stream = [System.IO.File]::Open($f, 'Open', 'Read', 'ReadWrite')
-                        $stream.Seek($positions[$f], 'Begin') | Out-Null
-                        $reader = New-Object System.IO.StreamReader($stream)
-                        while (-not $reader.EndOfStream) { Write-Output $reader.ReadLine() }
-                        $reader.Close(); $stream.Close()
-                        $positions[$f] = $newLen
+                        try {
+                            $stream = [System.IO.File]::Open(
+                                (Resolve-Path $f).Path, 'Open', 'Read', 'ReadWrite')
+                            $stream.Seek($positions[$f], 'Begin') | Out-Null
+                            $reader = [System.IO.StreamReader]::new($stream)
+                            while (-not $reader.EndOfStream) { Write-Output $reader.ReadLine() }
+                            $positions[$f] = $newLen
+                        } finally {
+                            if ($reader) { $reader.Close() }
+                            if ($stream) { $stream.Close() }
+                        }
                     }
                 }
             }

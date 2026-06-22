@@ -7,20 +7,22 @@ function Wux_top {
     )
 
     $i = 0
+    $os       = Get-CimInstance Win32_OperatingSystem -ErrorAction SilentlyContinue
+    $memTotal = if ($os) { [math]::Round($os.TotalVisibleMemorySize / 1MB, 1) } else { '?' }
     try {
         while ($true) {
+            $allProcs = Get-Process -ErrorAction SilentlyContinue
             $procs = if ($Pids) {
                 $Pids | ForEach-Object { Get-Process -Id $_ -ErrorAction SilentlyContinue }
             } else {
-                Get-Process -ErrorAction SilentlyContinue | Sort-Object CPU -Descending | Select-Object -First 20
+                $allProcs | Sort-Object CPU -Descending | Select-Object -First 20
             }
 
             Clear-Host
-            $now      = Get-Date -Format 'HH:mm:ss'
-            $procCount = (Get-Process).Count
-            $os        = Get-CimInstance Win32_OperatingSystem -ErrorAction SilentlyContinue
-            $memUsed   = if ($os) { [math]::Round(($os.TotalVisibleMemorySize - $os.FreePhysicalMemory) / 1MB, 1) } else { '?' }
-            $memTotal  = if ($os) { [math]::Round($os.TotalVisibleMemorySize / 1MB, 1) } else { '?' }
+            $now       = Get-Date -Format 'HH:mm:ss'
+            $procCount = $allProcs.Count
+            $osNow     = Get-CimInstance Win32_OperatingSystem -Property FreePhysicalMemory -ErrorAction SilentlyContinue
+            $memUsed   = if ($osNow) { [math]::Round(($os.TotalVisibleMemorySize - $osNow.FreePhysicalMemory) / 1MB, 1) } else { '?' }
 
             Write-Host "top - $now  tasks: $procCount  mem: ${memUsed}/${memTotal} GiB  (Ctrl+C to quit)" -ForegroundColor Cyan
             Write-Host ('{0,-7} {1,-22} {2,6} {3,9} {4,6}' -f 'PID', 'COMMAND', '%CPU', 'MEM(MB)', 'THR') -ForegroundColor Yellow
